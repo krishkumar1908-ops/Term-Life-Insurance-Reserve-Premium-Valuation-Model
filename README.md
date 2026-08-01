@@ -48,17 +48,23 @@ Calculated premiums and reserves using:
 
 ## Visualizations
 
+
 Reserve Growth Over Policy Duration
+
 
 <img width="976" height="551" alt="image" src="https://github.com/user-attachments/assets/8907b715-fe10-41c1-ab67-5e501a698c92" />
 
 
+
 Net Annual Premium by Scenario
+
 
 <img width="974" height="534" alt="image" src="https://github.com/user-attachments/assets/9185acee-ba77-4c12-9f9d-e44a7d754089" />
 
 
+
 Tornado Chart - Sensitivity Ranking
+
 
 <img width="984" height="571" alt="image" src="https://github.com/user-attachments/assets/ca42f7f2-24d9-47d4-a1c6-b84a38b8c952" />
 
