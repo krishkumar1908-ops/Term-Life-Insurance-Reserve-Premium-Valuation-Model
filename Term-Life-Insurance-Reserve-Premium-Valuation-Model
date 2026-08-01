@@ -1,1 +1,249 @@
+# Term Life Insurance Reserve & Premium Valuation Model
 
+**A commutation-function approach using the 2015 VBT mortality table**
+
+Author: Krish
+
+---
+
+## 1. Executive Summary
+
+This project builds a net premium and reserve valuation model for a 20-year term life insurance policy, using mortality rates from the **2015 Valuation Basic Table (VBT)** published by the Society of Actuaries. The goal is to demonstrate understanding of commutation functions, the equivalence principle for premium calculation, and the prospective method for reserve valuation.
+
+**Key Findings** — under base assumptions (issue age 45, 20-year term, $100,000 face amount, 4% interest):
+
+| Metric | Value |
+|---|---|
+| Net Single Premium | $3,868.73 |
+| Annuity-Due Factor (ä) | 13.8704 |
+| Net Annual Premium | $278.92 |
+| Peak Reserve | $1,139.15 (policy year 12, age 57) |
+
+The terminal reserve builds from $0 at issue to a peak of **$1,139.15** at policy year 12 (age 57), then declines back to **$0** at maturity (age 65) — the shape expected of a level-premium term policy, where the mortality cost per unit of remaining term rises but the remaining term itself is running out.
+
+**Sensitivity analysis reveals:**
+- **Policy term** has the largest impact on premium (10-year term: $192.95 vs. 30-year term: $449.85)
+- **Mortality assumption** has a substantial, roughly symmetric impact (80% mortality: $223.47 vs. 120% mortality: $334.21)
+- **Interest rate** has a smaller, though still meaningful, effect ($252.79 to $298.55 across 2%–7%)
+
+This project uses simplified assumptions for educational purposes but follows standard actuarial methodology consistent with professional practice.
+
+---
+
+## 2. Background & Motivation
+
+Life insurers must price a policy today for a promise that may not be paid out for decades. Getting this right means combining two sources of uncertainty — whether and when a policyholder dies, and what a future dollar is worth today — into a single premium.
+
+**What I wanted to learn:**
+- How do commutation functions (Dx, Nx, Cx, Mx) simplify life-contingent present value calculations?
+- How is a net premium derived from the equivalence principle?
+- Why does a level-premium policy's reserve rise and then fall back to zero?
+- How sensitive is the premium to interest rate, mortality, and policy term?
+
+This project gave me hands-on experience with concepts I'll encounter in Exam FM and Exam FAM.
+
+---
+
+## 3. Methodology
+
+**Data source:** 2015 VBT, Male, Non-Smoker, RR100 (Primary) table, Age Last Birthday basis (SOA Table ID 3242, certified 07/2018). Life table (lx, dx, px, qx) built from the Ultimate table with a radix of 100,000 at age 18.
+
+**Base case assumptions:**
+- Issue Age: 45
+- Policy Term: 20 years (to age 65)
+- Annual Interest Rate: 4%
+- Mortality Multiplier: 1.00
+- Face Amount: $100,000
+
+### Step 1 — Commutation Functions
+
+```
+Dx = lx × v^x            (discounted number of lives)
+Cx = dx × v^(x+1)        (discounted number of deaths)
+Nx = Σ Dx (age x to end) (used for annuity factors)
+Mx = Σ Cx (age x to end) (used for insurance factors)
+```
+
+| Function | Age 45 (issue) | Age 65 (x+n) |
+|---|---:|---:|
+| Dx | 16,744.13 | 7,163.71 |
+| Mx | 3,916.18 | 3,268.40 |
+| Nx | 333,526.50 | 101,278.10 |
+
+### Step 2 — Net Premiums (Equivalence Principle)
+
+```
+NSP (per $1) = (Mx − M(x+n)) / Dx           = 0.038687
+ä   (per $1) = (Nx − N(x+n)) / Dx           = 13.8704
+NAP (per $1) = NSP / ä                      = 0.0027892
+```
+
+Scaled to the $100,000 face amount: **Net Single Premium = $3,868.73**, **Net Annual Premium = $278.92/year**.
+
+### Step 3 — Reserve Schedule (Prospective Method)
+
+```
+Reserve(t) = Face × [ (M(x+t) − M(x+n))/D(x+t) − NAP × (N(x+t) − N(x+n))/D(x+t) ]
+```
+
+Early in the policy, the level premium exceeds the true cost of that year's mortality risk, so a reserve builds up. As the policyholder ages, mortality cost rises faster than the level premium, and the reserve is drawn down. Because it's term insurance with no benefit at expiry, the reserve returns to exactly $0 at age 65.
+
+---
+
+## 4. Results & Analysis
+
+### 4.1 Reserve Schedule by Policy Year
+
+![Reserve Schedule](reserve_schedule.png)
+
+| Year (t) | Age | PV Future Benefits ($) | PV Future Premiums ($) | Reserve ($) |
+|---:|---:|---:|---:|---:|
+| 0 | 45 | 3,868.73 | 3,868.73 | 0.00 |
+| 1 | 46 | 3,870.63 | 3,739.35 | 131.28 |
+| 2 | 47 | 3,866.84 | 3,604.80 | 262.04 |
+| 3 | 48 | 3,857.11 | 3,464.84 | 392.27 |
+| 4 | 49 | 3,839.27 | 3,319.30 | 519.97 |
+| 5 | 50 | 3,812.00 | 3,167.95 | 644.06 |
+| 6 | 51 | 3,772.99 | 3,010.58 | 762.41 |
+| 7 | 52 | 3,715.94 | 2,847.08 | 868.86 |
+| 8 | 53 | 3,637.16 | 2,677.20 | 959.96 |
+| 9 | 54 | 3,533.76 | 2,500.67 | 1,033.10 |
+| 10 | 55 | 3,404.65 | 2,317.11 | 1,087.54 |
+| 11 | 56 | 3,248.64 | 2,126.13 | 1,122.51 |
+| 12 | 57 | 3,066.46 | 1,927.31 | **1,139.15 (peak)** |
+| 13 | 58 | 2,855.92 | 1,720.23 | 1,135.69 |
+| 14 | 59 | 2,613.72 | 1,504.47 | 1,109.25 |
+| 15 | 60 | 2,334.44 | 1,279.60 | 1,054.84 |
+| 16 | 61 | 2,008.42 | 1,045.18 | 963.24 |
+| 17 | 62 | 1,622.44 | 800.71 | 821.74 |
+| 18 | 63 | 1,166.49 | 545.53 | 620.96 |
+| 19 | 64 | 628.85 | 278.92 | 349.93 |
+| 20 | 65 | 0.00 | 0.00 | 0.00 |
+
+The reserve traces an inverted-U shape: it rises for the first 12 years as premium income exceeds the true cost of mortality at younger ages, then falls for the last 8 years as mortality cost overtakes the level premium. The peak reserve is only ~1.1% of face amount, showing how little of a 20-year term premium is really "savings" compared to whole life or an endowment policy.
+
+### 4.2 Sensitivity Analysis
+
+| Scenario | Interest Rate | Mortality Multiplier | Term | Net Annual Premium | % Change |
+|---|---:|---:|---:|---:|---:|
+| Base Case | 4% | 1.00x | 20 yrs | $278.92 | 0.0% |
+| High Interest (7%) | 7% | 1.00x | 20 yrs | $252.79 | −9.4% |
+| Low Interest (2%) | 2% | 1.00x | 20 yrs | $298.55 | 7.0% |
+| High Mortality (120%) | 4% | 1.20x | 20 yrs | $334.21 | 19.8% |
+| Low Mortality (80%) | 4% | 0.80x | 20 yrs | $223.47 | −19.9% |
+| Long Term (30 yrs) | 4% | 1.00x | 30 yrs | $449.85 | 61.3% |
+| Short Term (10 yrs) | 4% | 1.00x | 10 yrs | $192.95 | −30.8% |
+
+**Policy term dominates.** Extending the term from 10 to 30 years more than doubles the annual premium, because a longer term pushes the average benefit payment further from issue and exposes the insurer to mortality at much older, higher-qx ages. Mortality assumption is the next largest driver — a 20-percentage-point swing in the multiplier moves the premium by roughly ±20%. Interest rate matters far less than for long-duration liabilities like pensions or whole life, because a 20-year term policy's expected payout is concentrated at older ages where survival probability, not discounting, does most of the work.
+
+### 4.3 Tornado Chart
+
+![Tornado Chart](tornado_chart.png)
+
+Policy term has the widest swing in premium outcomes, followed by mortality assumption, with interest rate producing the narrowest band. This ordering is specific to term insurance and would differ for a product with a longer or investment-linked benefit structure.
+
+---
+
+## 5. What I Learned
+
+**Technical skills:**
+- Built commutation functions (Dx, Cx, Nx, Mx) directly from a published SOA mortality table
+- Applied the equivalence principle to derive net single and net annual premiums
+- Calculated a full prospective reserve schedule, year by year
+- Ran multi-dimensional sensitivity analysis and built a tornado chart
+
+**Actuarial concepts:**
+- Commutation functions collapse life-contingent present values into simple ratios
+- The equivalence principle sets expected PV of premiums equal to expected PV of benefits at issue
+- Reserve mechanics: why a level premium creates a reserve that rises then falls for term insurance
+- How term length, mortality, and interest rate assumptions each drive premium differently
+
+**Real-world insights:**
+1. **Why term life is "cheap" relative to whole life:** with no savings component and a fixed end date, most of the premium simply funds mortality risk in a given year, keeping the peak reserve to ~1% of face amount.
+2. **Why insurers underwrite so heavily on age and health:** mortality multiplier and policy term are the two largest levers on premium, so small differences in an applicant's true mortality risk directly change the price that keeps the policy fairly priced.
+3. **Why actuaries exist:** turning a raw mortality table into a defensible premium and reserve schedule requires judgment about assumptions, sensitivity testing, and communicating risk to underwriters and management.
+
+---
+
+## 6. Limitations & Future Enhancements
+
+**What I simplified:**
+
+*Mortality*
+- Used the Ultimate table only (attained-age basis); did not incorporate select-period mortality by policy duration
+- No mortality improvement trend applied
+- Only one risk class modelled (Male, Non-Smoker, RR100)
+
+*Product & demographic assumptions*
+- No lapse or surrender assumptions
+- No expense loading — net premiums only, not gross (office) premiums
+- Level annual premium only
+
+*Economic assumptions*
+- Fixed 4% discount rate for the life of the policy; no stochastic interest rate modelling
+
+*Model structure*
+- Single policy, not a portfolio; deterministic reserve calculation only
+
+**Future enhancements:**
+- Use the Select & Ultimate table to reflect underwriting selection effects
+- Add gross premium calculation with expense and profit loadings
+- Model a portfolio of policies across multiple issue ages
+- Incorporate lapse rates and compare net vs. modified reserves
+- Compare results against published term life insurance quotes to validate pricing
+
+---
+
+## 7. Conclusions
+
+For term life insurance, **policy duration and mortality assumptions matter far more to pricing than interest rate** — the opposite ordering from what dominates long-duration liabilities like pensions. This project reinforced why the same actuarial toolkit (commutation functions, equivalence principle, reserves) produces very different risk profiles across products, and why sensitivity analysis — not just a single base-case number — is essential to understanding a liability.
+
+While simplified for educational purposes, this analysis follows the same fundamental methodology used by professional actuaries pricing and reserving term life insurance products.
+
+---
+
+## Appendix A: Assumptions Summary
+
+**Policy Profile**
+- Issue Age: 45
+- Policy Term: 20 years (to age 65)
+- Face Amount: $100,000
+
+**Actuarial Assumptions**
+- Mortality Table: 2015 VBT, Male, Non-Smoker, RR100 (Primary), Age Last Birthday
+- Mortality Multiplier: 1.00
+- Annual Interest Rate: 4.0%
+- Table Radix: 100,000 at age 18
+
+**Calculated Values**
+- Net Single Premium: $3,868.73
+- Annuity-Due Factor (ä): 13.8704
+- Net Annual Premium: $278.92
+- Peak Reserve: $1,139.15 (policy year 12, age 57)
+
+## Appendix B: Key Formulas
+
+```
+1. Commutation Functions:
+   Dx = lx × v^x        Cx = dx × v^(x+1)
+   Nx = Σ Dx (age x to end)      Mx = Σ Cx (age x to end)
+
+2. Net Single Premium (n-year term, per $1):
+   NSP = (Mx − M(x+n)) / Dx
+
+3. Annuity-Due Factor (n-year temporary, per $1):
+   ä = (Nx − N(x+n)) / Dx
+
+4. Net Annual Premium (per $1):
+   NAP = NSP / ä
+
+5. Prospective Reserve at time t:
+   Reserve(t) = Face × [ (M(x+t) − M(x+n))/D(x+t) − NAP × (N(x+t) − N(x+n))/D(x+t) ]
+```
+
+## Appendix C: References
+
+- Society of Actuaries (SOA) — [mort.soa.org](https://mort.soa.org), Table ID 3242 (2015 VBT, Male, Non-Smoker, RR100, Age Last Birthday)
+- Actuarial Standards of Practice (ASOP) No. 2: Nonguaranteed Elements for Life Insurance and Annuity Products
+- Bowers et al., *Actuarial Mathematics* — chapters on commutation functions and net premium reserves
+- SOA Exam FM/FAM study materials — life contingencies and reserve topics
