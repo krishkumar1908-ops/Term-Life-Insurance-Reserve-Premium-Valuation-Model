@@ -1,9 +1,9 @@
-[README.md](https://github.com/user-attachments/files/30619291/README.md)
-# Term-Life-Insurance-Reserve-Premium-Valuation-Model# Term Life Insurance Reserve & Premium Valuation Model
+[README (1).md](https://github.com/user-attachments/files/30619545/README.1.md)
+# Term Life Insurance Reserve & Premium Valuation Model
 
-**Author:** Krish
+**Author:** KRISH
 
-**Date:** August 2026
+**Date:** AUGUST 2026
 
 **Purpose:** Actuarial Analysis Project
 
@@ -42,40 +42,40 @@ Calculated premiums and reserves using:
 6. Multi-dimensional sensitivity analysis across discount rate (2–7%), mortality
    assumption (80–120%), and policy term (10–30 years)
 
-## Sensitivity Results
+## Files
 
-| Variable | Low Scenario | High Scenario | Premium Swing |
-|---|---|---|---|
-| Policy Term | 10 yrs → $192.95 | 30 yrs → $449.85 | **±61.3% / −30.8%** |
-| Mortality Assumption | 80% → $223.47 | 120% → $334.21 | ±19.8% / −19.9% |
-| Interest Rate | 7% → $252.79 | 2% → $298.55 | +7.0% / −9.4% |
+- `Term_Life_Insurance_Reserve_Premium_Model.xlsx` - Complete Excel model
 
-
-Files
-Term_Life_Insurance_Reserve_Premium_Model.xlsx - Complete Excel model
-Visualizations
-
+## Visualizations
 
 Reserve Growth Over Policy Duration
 
+<img width="976" height="551" alt="image" src="https://github.com/user-attachments/assets/8907b715-fe10-41c1-ab67-5e501a698c92" />
+
+
 Net Annual Premium by Scenario
+
+<img width="974" height="534" alt="image" src="https://github.com/user-attachments/assets/9185acee-ba77-4c12-9f9d-e44a7d754089" />
+
 
 Tornado Chart - Sensitivity Ranking
 
+<img width="984" height="571" alt="image" src="https://github.com/user-attachments/assets/ca42f7f2-24d9-47d4-a1c6-b84a38b8c952" />
 
-What I Learned
-Life contingencies and commutation functions (Dx, Cx, Nx, Mx)
-Sensitivity analysis for financial and pricing risk
-Excel modeling with formula-driven, dynamic calculations
-Why term life insurance pricing is so sensitive to policy length
+## What I Learned
 
+- Life contingencies and commutation functions (Dx, Cx, Nx, Mx)
+- Sensitivity analysis for financial and pricing risk
+- Excel modeling with formula-driven, dynamic calculations
+- Why term life insurance pricing is so sensitive to policy length
 
-Limitations
-Single risk class only (Male, Non-Smoker, Standard RR100)
-Single policy (not a portfolio of policyholders)
-Deterministic (not stochastic)
-Educational purposes only
+## Limitations
 
+- Single risk class only (Male, Non-Smoker, Standard RR100)
+- Single policy (not a portfolio of policyholders)
+- Deterministic (not stochastic)
+- Educational purposes only
 
-Contact
-[krishkumar1908@gmail.com]
+## Contact
+
+krish.kumar1908@gmail.com
